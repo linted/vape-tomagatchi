@@ -1,0 +1,6 @@
+[submodule "deps/FreeRTOS-LTS"]
+	path = deps/FreeRTOS-LTS
+	url = git@github.com:FreeRTOS/FreeRTOS-LTS.git
+[submodule "deps/STM32CubeF0"]
+	path = deps/STM32CubeF0
+	url = git@github.com:STMicroelectronics/STM32CubeF0.git

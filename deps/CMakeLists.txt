@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.28)
-project(tomagatchi)
-
 set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_LIST_DIR}/deps/FreeRTOS-LTS/FreeRTOS/FreeROTS-Kernel)
 
 # Add the freertos_config for FreeRTOS-Kernel
@@ -64,4 +61,14 @@ target_compile_options(freertos_kernel PRIVATE
 set_property(TARGET freertos_kernel PROPERTY C_STANDARD 90)
 
 
-add_subdirectory(src)
+# Set up HAL library
+
+set(stm32f0xx_hal_path "${CMAKE_CURRENT_LIST_DIR}/STM32CubeF0/Drivers/STM32F0xx_HAL_Driver/")
+add_library(stm32f0xx_hal STATIC 
+    ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_rcc_ex.c
+    ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_cortex.c
+    ${stm32f0xx_hal_path}/Src/stm32f0xx_hal.c
+    ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_rcc.c
+    ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_gpio.c
+)
+target_include_directories(stm32f0xx_hal PUBLIC "${stm32f0xx_hal_path}/Inc" )

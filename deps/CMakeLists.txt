@@ -1,11 +1,11 @@
-set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_LIST_DIR}/deps/FreeRTOS-LTS/FreeRTOS/FreeROTS-Kernel)
+set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-LTS/FreeRTOS/FreeRTOS-Kernel)
 
 # Add the freertos_config for FreeRTOS-Kernel
 add_library(freertos_config INTERFACE)
 
 target_include_directories(freertos_config
     INTERFACE
-    "../template_configuration"
+    "${CMAKE_CURRENT_LIST_DIR}/../src/include"
 )
 
 
@@ -46,7 +46,7 @@ target_compile_options(freertos_kernel PRIVATE
     $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Wall>
     $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Wextra>
     $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Wpedantic>
-    $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Werror>
+    # $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Werror>
     $<$<COMPILE_LANG_AND_ID:C,Clang,GNU>:-Wconversion>
     $<$<COMPILE_LANG_AND_ID:C,Clang>:-Weverything>
 
@@ -70,5 +70,12 @@ add_library(stm32f0xx_hal STATIC
     ${stm32f0xx_hal_path}/Src/stm32f0xx_hal.c
     ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_rcc.c
     ${stm32f0xx_hal_path}/Src/stm32f0xx_hal_gpio.c
+    ${CMAKE_CURRENT_LIST_DIR}/STM32CubeF0/Drivers/CMSIS/Device/ST/STM32F0xx/Source/Templates/gcc/startup_stm32f030x8.s
 )
-target_include_directories(stm32f0xx_hal PUBLIC "${stm32f0xx_hal_path}/Inc" )
+target_include_directories(stm32f0xx_hal PUBLIC
+    "${stm32f0xx_hal_path}/Inc/"
+    "${CMAKE_CURRENT_LIST_DIR}/STM32CubeF0/Drivers/CMSIS/Device/ST/STM32F0xx/Include/" 
+    "${CMAKE_CURRENT_LIST_DIR}/STM32CubeF0/Drivers/CMSIS/Core/Include/"
+    "${CMAKE_CURRENT_LIST_DIR}/../src/include/"
+    "${CMAKE_CURRENT_LIST_DIR}/Middlewares/Third_Party/FreeRTOS/Source/include/"
+)

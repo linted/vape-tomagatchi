@@ -5,9 +5,10 @@
 #include <timers.h>
 #include <queue.h>
 
-
+#include "stm32f030x8.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_gpio.h"
+
 
 
 #include "tomagatchi.h"
@@ -24,7 +25,26 @@ void tomagatchi_setup(void) {
     static TimerHandle_t craveTimer = NULL;
     craveTimer = xTimerCreate( "Craving", CRAVE_PERIOD, pdTRUE, NULL, craveFood);
     xTimerStart(craveTimer, 0);
+
+
+    // setup gpio
+
+    GPIO_InitTypeDef gpio_init = {
+        .Pin = GPIO_PIN_0,
+        .Mode = GPIO_MODE_IT_RISING,
+        .Pull = GPIO_PULLDOWN,
+        .Speed = GPIO_SPEED_FREQ_LOW,
+    } ;
+
+    HAL_GPIO_Init(GPIOA, &gpio_init);
+
+
 }
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+
+}
+
 
 
 void craveFood(  TimerHandle_t xTimerHandle ) {

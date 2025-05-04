@@ -4,6 +4,7 @@
 
 #define CRAVE_PERIOD pdMS_TO_TICKS( 2000UL )
 #define FRAMES_PER_SECOND pdMS_TO_TICKS( 33UL )
+#define BUTTON_PRESS_DELAY pdMS_TO_TICKS( 500UL )
 
 #define FRAME_DRAW_TASK_PRIORITY (tskIDLE_PRIORITY  + 1)
 
@@ -12,7 +13,7 @@
 #include <timers.h>
 #include <queue.h>
 
-void tomagatchi_setup(void);
+int tomagatchi_setup(void);
 void craveFood(  TimerHandle_t xTimerHandle );
 void consumeFood(uint16_t amount);
 void drawFrame(void *pvParameters);

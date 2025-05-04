@@ -15,9 +15,21 @@
 
 
 static uint16_t hunger = 0;
+static QueueHandle_t buttonQueue = NULL;
 
 
-void tomagatchi_setup(void) {
+int tomagatchi_setup(void) {
+
+    if (buttonQueue == NULL) {
+        buttonQueue = xQueueCreate( 10, sizeof( void * ) );
+        if (buttonQueue == NULL) {
+            // Failed to create the queue.
+            // Handle error
+            return -1;
+        }
+    }
+
+
     // Setup frame task
     xTaskCreate(drawFrame, "draw frame", configMINIMAL_STACK_SIZE, NULL, FRAME_DRAW_TASK_PRIORITY, NULL);
 
@@ -42,9 +54,48 @@ void tomagatchi_setup(void) {
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
+    if (buttonQueue == NULL) {
+        // Failed to create the queue.
+        // Handle error
+        return;
+    }
+
+    switch (GPIO_Pin) {
+        case GPIO_PIN_0:
+            // Button pressed
+            // Send a message to the queue
+            xQueueSendToBackFromISR(buttonQueue, &GPIO_Pin, &xHigherPriorityTaskWoken);
+            break;
+    }
+
+    // yield if we woke a higher priority task
+    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
+
+void countPresses() {
+
+    for ( ; ; ) {
+        uint16_t buttonPresses = 0;
+        uint16_t buttonPin;
+        TickType_t sleepLen = portMAX_DELAY;
+        while (buttonPresses < 5) {
+            if (xQueueReceive(buttonQueue, &buttonPin, sleepLen) == pdTRUE) {
+                // Button press received
+                // set the double press length
+                sleepLen = BUTTON_PRESS_DELAY;
+                buttonPresses++;
+            } else {
+                // no more presses, handle current count
+                break;
+            }
+        }
+    }
+
+
+}
 
 
 void craveFood(  TimerHandle_t xTimerHandle ) {
